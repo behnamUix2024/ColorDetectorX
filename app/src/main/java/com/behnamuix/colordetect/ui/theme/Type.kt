@@ -26,6 +26,10 @@ val Typography = Typography(
         fontFamily = Vazirfont,
         textDirection = TextDirection.Rtl
     ),
+    displayLarge = TextStyle(
+        fontFamily = Vazirfont,
+        textDirection = TextDirection.Rtl
+    ),
     /* Other default text styles to override
     titleLarge = TextStyle(
         fontFamily = FontFamily.Default,

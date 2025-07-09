@@ -7,13 +7,21 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -21,13 +29,18 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import com.behnamuix.colordetect.myket.util.IabHelper
 
@@ -62,9 +75,9 @@ class MyketActivity : ComponentActivity() {
                 var first = sharedPreferences.getBoolean(KEY_PREMIUM_PURCHASED, false)
                 if (first) {
 
-                    BuyScreen()
-                } else {
                     goToMain()
+                } else {
+                    BuyScreen()
                 }
             }
         }
@@ -82,9 +95,9 @@ class MyketActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun BuyScreen() {
-        Box(
-            contentAlignment = Alignment.Center,
+        Column(
             modifier = Modifier
+                .fillMaxSize()
                 .background(
                     brush = Brush.verticalGradient(
                         colors = listOf(
@@ -94,47 +107,100 @@ class MyketActivity : ComponentActivity() {
                         )
                     )
                 )
-                .fillMaxSize()
         ) {
-            Card(
-                modifier = Modifier
-                    .padding(12.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                elevation = CardDefaults.elevatedCardElevation(8.dp),
-
+            OutlinedCard (
+                Modifier
+                    .padding(top=18.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.Transparent),
                 shape = RoundedCornerShape(12.dp)
-            ) {
-
+            ){
                 Column(
-
+                    verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
-                        .padding(12.dp),
+                        .fillMaxWidth()
+                        .fillMaxHeight(0.7f)
+
                 ) {
+                    Image(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(12.dp))
+                            .width(200.dp)
+                            .height(200.dp),
+                        painter = painterResource(R.drawable.color_picker),
+                        contentScale = ContentScale.Crop,
+                        contentDescription = ""
+                    )
+                    Spacer(modifier = Modifier.height(20.dp))
                     Text(
-                        text = " با تشکر از نصب اپلیکیشن.همین حالا با 20% تخفیف نسخه کامل را خریداری کنید!",
-                        style = MaterialTheme.typography.bodyLarge,
+                        text="رنگیاب",
+                        color=Color.White,
+                        style = MaterialTheme.typography.displayLarge
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
 
-                        )
-                    Spacer(modifier = Modifier.height(24.dp))
-                    Button(
-                        colors = ButtonDefaults.buttonColors(containerColor = PurpleGrey80),
-                        shape = RoundedCornerShape(12.dp),
-                        onClick = {
-                            payConfig()
+                    Text(
+                        text="تشخیص رنگ با الگوریتم هوشمند و دقیق!",
+                        color=Color(0xFFCECECE),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
 
-                        },
-                        modifier = Modifier.align(Alignment.End)
+                    Text(
+                        text="version 1.0.0",
+                        color=Color.White,
+                        style = MaterialTheme.typography.labelLarge
+                    )
+                }
+            }
+            Box(
+                contentAlignment = Alignment.BottomCenter,
+                modifier = Modifier
+                    .fillMaxSize().padding(bottom = 60.dp)
+
+
+            ) {
+                Card(
+                    modifier = Modifier
+                        .padding(12.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    elevation = CardDefaults.elevatedCardElevation(8.dp),
+
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+
+                    Column(
+
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .padding(12.dp),
                     ) {
                         Text(
-                            modifier = Modifier
-                                .padding(4.dp),
+                            text = " با تشکر از نصب اپلیکیشن.همین حالا با 20% تخفیف نسخه کامل را خریداری کنید!",
                             style = MaterialTheme.typography.bodyLarge,
-                            text = "خریداری نسخه پرمیوم"
-                        )
+
+                            )
+                        Spacer(modifier = Modifier.height(24.dp))
+                        Button(
+                            colors = ButtonDefaults.buttonColors(containerColor = PurpleGrey80),
+                            shape = RoundedCornerShape(12.dp),
+                            onClick = {
+                                payConfig()
+
+                            },
+                            modifier = Modifier.align(Alignment.End)
+                        ) {
+                            Text(
+                                modifier = Modifier
+                                    .padding(4.dp),
+                                style = MaterialTheme.typography.bodyLarge,
+                                text = "خریداری نسخه پرمیوم"
+                            )
+                        }
                     }
                 }
             }
+
         }
     }
 
