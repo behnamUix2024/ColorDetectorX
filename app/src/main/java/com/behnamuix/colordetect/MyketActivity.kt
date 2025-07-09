@@ -13,6 +13,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,9 +28,14 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -108,51 +114,48 @@ class MyketActivity : ComponentActivity() {
                     )
                 )
         ) {
-            OutlinedCard (
-                Modifier
-                    .padding(top=18.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-                shape = RoundedCornerShape(12.dp)
-            ){
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.7f)
+
+            ) {
+                Image(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(0.7f)
+                        .clip(RoundedCornerShape(12.dp))
+                        .width(200.dp)
+                        .height(200.dp),
+                    painter = painterResource(R.drawable.color_picker),
+                    contentScale = ContentScale.Crop,
+                    contentDescription = ""
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(
+                    text="رنگ یاب",
+                    color=Color.White,
+                    style = MaterialTheme.typography.displayLarge
+                )
+                Spacer(modifier = Modifier.height(8.dp))
 
-                ) {
-                    Image(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(12.dp))
-                            .width(200.dp)
-                            .height(200.dp),
-                        painter = painterResource(R.drawable.color_picker),
-                        contentScale = ContentScale.Crop,
-                        contentDescription = ""
-                    )
-                    Spacer(modifier = Modifier.height(20.dp))
-                    Text(
-                        text="رنگیاب",
-                        color=Color.White,
-                        style = MaterialTheme.typography.displayLarge
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text="تشخیص رنگ با الگوریتم هوشمند و دقیق!",
+                    color=Color(0xFFCECECE),
+                    style = MaterialTheme.typography.bodyLarge
+                )
+                Spacer(modifier = Modifier.height(8.dp))
 
-                    Text(
-                        text="تشخیص رنگ با الگوریتم هوشمند و دقیق!",
-                        color=Color(0xFFCECECE),
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text="version 1.0.0",
+                    color=Color.White,
+                    style = MaterialTheme.typography.labelLarge
+                )
+                Spacer(modifier = Modifier.height(32.dp))
 
-                    Text(
-                        text="version 1.0.0",
-                        color=Color.White,
-                        style = MaterialTheme.typography.labelLarge
-                    )
-                }
             }
+
+
             Box(
                 contentAlignment = Alignment.BottomCenter,
                 modifier = Modifier
@@ -175,8 +178,9 @@ class MyketActivity : ComponentActivity() {
                         modifier = Modifier
                             .padding(12.dp),
                     ) {
+
                         Text(
-                            text = " با تشکر از نصب اپلیکیشن.همین حالا با 20% تخفیف نسخه کامل را خریداری کنید!",
+                            text = " با تشکر از نصب اپلیکیشن.همین حالا با 20% تخفیف این نسخه را خریداری کنید!",
                             style = MaterialTheme.typography.bodyLarge,
 
                             )
@@ -188,15 +192,30 @@ class MyketActivity : ComponentActivity() {
                                 payConfig()
 
                             },
-                            modifier = Modifier.align(Alignment.End)
+                            modifier = Modifier.align(Alignment.End).fillMaxWidth()
                         ) {
-                            Text(
-                                modifier = Modifier
-                                    .padding(4.dp),
-                                style = MaterialTheme.typography.bodyLarge,
-                                text = "خریداری نسخه پرمیوم"
-                            )
+                            Row (){
+
+                                Text(
+                                    modifier = Modifier
+                                        .padding(4.dp),
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    text = "خریداری نسخه پرمیوم"
+                                )
+                                Icon(
+                                    painter = painterResource(R.drawable.bag),
+                                    contentDescription = ""
+                                )
+                            }
+
                         }
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        LinearProgressIndicator(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            color = PurpleGrey80
+                        )
                     }
                 }
             }

@@ -27,6 +27,7 @@ val Typography = Typography(
         textDirection = TextDirection.Rtl
     ),
     displayLarge = TextStyle(
+        fontSize = 26.sp,
         fontFamily = Vazirfont,
         textDirection = TextDirection.Rtl
     ),

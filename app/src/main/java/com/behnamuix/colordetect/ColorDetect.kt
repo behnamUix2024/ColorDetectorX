@@ -53,9 +53,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.behnamuix.colordetect.ui.theme.PurpleGrey80
@@ -166,13 +168,13 @@ fun ColorInfoBox(color: Color, rgb: String, hex: String) {
     ) {
         Box(
             modifier = Modifier
-                .size(30.dp)
-                .border(1.dp, Color(0xFFFFEB3B), CircleShape)
+                .size(35.dp)
+                .border(2.dp, Color(0xFFFFEB3B), CircleShape)
         )
         Box(
             modifier = Modifier
-                .size(15.dp)
-                .border(0.5.dp, Color(0xFFF44336), CircleShape)
+                .size(20.dp)
+                .border(2.dp, Color(0xFFF44336), CircleShape)
         )
 
     }
@@ -242,7 +244,7 @@ fun ColorInfoBox(color: Color, rgb: String, hex: String) {
                                     Text(
                                         text = rgb,
                                         style = MaterialTheme.typography.titleSmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        color = Color(0xFF909090)
                                     )
 
 
@@ -295,25 +297,34 @@ fun CopyableText(textToCopy: String) {
     val context = LocalContext.current
     val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
-    Text(
-        text = textToCopy,
+    Card(
+        elevation = CardDefaults.elevatedCardElevation(8.dp),
         modifier = Modifier
-            .clickable {
-                // ایجاد یک ClipData برای قرار دادن متن در کلیپ‌بورد
-                val clip = ClipData.newPlainText("label", textToCopy)
-                clipboardManager.setPrimaryClip(clip)
-                //WebViewColor(textToCopy)
+            .padding(top=12.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
+    ){
+        Text(
+            textAlign = TextAlign.Center,
+            text = textToCopy,
+            modifier = Modifier
+                .clickable {
+                    // ایجاد یک ClipData برای قرار دادن متن در کلیپ‌بورد
+                    val clip = ClipData.newPlainText("label", textToCopy)
+                    clipboardManager.setPrimaryClip(clip)
+                    //WebViewColor(textToCopy)
 
 
-                // نمایش یک پیام کوچک (Toast) به کاربر
-            }
-            .padding(8.dp)
-            .fillMaxWidth(0.4f),
-        color = PurpleGrey80,
-        fontWeight = FontWeight.Bold,
-        style = MaterialTheme.typography.titleMedium
+                    // نمایش یک پیام کوچک (Toast) به کاربر
+                }
+                .padding(8.dp)
+                .fillMaxWidth(0.4f),
+            color = PurpleGrey80,
+            fontFamily = FontFamily.Default,
+            fontWeight = FontWeight.Bold,
+            fontSize = 30.sp
 
-    )
+        )
+    }
 }
 
 @Composable
