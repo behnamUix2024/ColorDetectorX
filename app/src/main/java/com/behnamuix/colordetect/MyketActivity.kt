@@ -47,6 +47,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.behnamuix.colordetect.myket.util.IabHelper
 
@@ -194,7 +195,9 @@ class MyketActivity : ComponentActivity() {
                             },
                             modifier = Modifier.align(Alignment.End).fillMaxWidth()
                         ) {
-                            Row (){
+                            Row (
+                                verticalAlignment = Alignment.CenterVertically
+                            ){
 
                                 Text(
                                     modifier = Modifier
@@ -202,6 +205,7 @@ class MyketActivity : ComponentActivity() {
                                     style = MaterialTheme.typography.bodyLarge,
                                     text = "خریداری نسخه پرمیوم"
                                 )
+                                Spacer(Modifier.width(8.dp))
                                 Icon(
                                     painter = painterResource(R.drawable.bag),
                                     contentDescription = ""
@@ -214,7 +218,7 @@ class MyketActivity : ComponentActivity() {
                         LinearProgressIndicator(
                             modifier = Modifier
                                 .fillMaxWidth(),
-                            color = PurpleGrey80
+                            color = Color(0xFFFF5722)
                         )
                     }
                 }
