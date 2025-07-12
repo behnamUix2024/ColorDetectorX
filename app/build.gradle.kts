@@ -86,6 +86,8 @@ android {
 
         implementation("com.github.myketstore:myket-billing-client:1.6")
 
+        implementation("com.github.ZarinPal:Android-SDK-Kotlin:1.1.1")
+
 
     }
 }

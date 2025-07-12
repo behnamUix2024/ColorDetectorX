@@ -7,6 +7,8 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -38,10 +40,15 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -64,7 +71,6 @@ import androidx.core.content.edit
 
 class MyketActivity : ComponentActivity() {
     val SKU_PREMIUM: String = "color_detect"
-    var buy = mutableStateOf(false)
     val RC_REQUEST: Int = 10002
     private val KEY_PREMIUM_PURCHASED = "first_launch"
     lateinit var mHelper: IabHelper
@@ -81,7 +87,6 @@ class MyketActivity : ComponentActivity() {
             ColorDetectTheme {
                 var first = sharedPreferences.getBoolean(KEY_PREMIUM_PURCHASED, false)
                 if (first) {
-
                     goToMain()
                 } else {
                     BuyScreen()
@@ -134,25 +139,50 @@ class MyketActivity : ComponentActivity() {
                 )
                 Spacer(modifier = Modifier.height(20.dp))
                 Text(
-                    text="رنگ یاب",
-                    color=Color.White,
+                    text = "رنگ یاب",
+                    color = Color.White,
                     style = MaterialTheme.typography.displayLarge
                 )
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text="تشخیص رنگ با الگوریتم هوشمند و دقیق!",
-                    color=Color(0xFFCECECE),
+                    text = "تشخیص رنگ با الگوریتم هوشمند و دقیق!",
+                    color = Color(0xFFCECECE),
                     style = MaterialTheme.typography.bodyLarge
                 )
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text="version 1.0.0",
-                    color=Color.White,
+                    text = "version 1.0.0",
+                    color = Color.White,
                     style = MaterialTheme.typography.labelLarge
                 )
                 Spacer(modifier = Modifier.height(32.dp))
+                Card(
+                    colors = CardDefaults.cardColors(containerColor = Color.White)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .padding(6.dp)
+                    ) {
+                        Text(
+                            text = "برای کپی کردن کد رنگی بر روی کد هکس ضربه بزنید!",
+                            color = Color(0xFFFF5722),
+                            style = MaterialTheme.typography.labelLarge
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Icon(
+                            modifier = Modifier
+                                .size(24.dp),
+                            tint = Color(0xFFFF5722),
+                            painter = painterResource(R.drawable.scan),
+                            contentDescription = "",
+
+                            )
+
+                    }
+                }
+
 
             }
 
@@ -160,7 +190,8 @@ class MyketActivity : ComponentActivity() {
             Box(
                 contentAlignment = Alignment.BottomCenter,
                 modifier = Modifier
-                    .fillMaxSize().padding(bottom = 60.dp)
+                    .fillMaxSize()
+                    .padding(bottom = 60.dp)
 
 
             ) {
@@ -193,23 +224,24 @@ class MyketActivity : ComponentActivity() {
                                 payConfig()
 
                             },
-                            modifier = Modifier.align(Alignment.End).fillMaxWidth()
+                            modifier = Modifier
+                                .align(Alignment.End)
+                                .fillMaxWidth()
                         ) {
-                            Row (
+                            Row(
                                 verticalAlignment = Alignment.CenterVertically
-                            ){
+                            ) {
 
                                 Text(
                                     modifier = Modifier
                                         .padding(4.dp),
+                                    color = Color.White,
                                     style = MaterialTheme.typography.bodyLarge,
-                                    text = "خریداری نسخه پرمیوم"
+                                    text = "خریداری نسخه پرمیوم(درگاه مایکت)"
                                 )
                                 Spacer(Modifier.width(8.dp))
-                                Icon(
-                                    painter = painterResource(R.drawable.bag),
-                                    contentDescription = ""
-                                )
+
+                                AnimatedBag()
                             }
 
                         }
@@ -226,6 +258,30 @@ class MyketActivity : ComponentActivity() {
 
         }
     }
+
+    @Composable
+    fun AnimatedBag() {
+        var isRotated by remember { mutableStateOf(false) }
+        val rotation by animateFloatAsState(
+            targetValue = if (isRotated) 360f else 0f,
+
+            animationSpec = tween(
+                delayMillis = 500,
+                durationMillis = 1500
+            )
+        )
+        LaunchedEffect(Unit) {
+            isRotated = !isRotated
+        }
+
+        Icon(
+            painter = painterResource(R.drawable.bag),
+            contentDescription = "",
+            modifier = Modifier
+                .rotate(rotation)
+        )
+    }
+
 
     private fun payConfig() {
         Log.d("TAG", "Initializing IAB with key: ${BuildConfig.IAB_PUBLIC_KEY}")

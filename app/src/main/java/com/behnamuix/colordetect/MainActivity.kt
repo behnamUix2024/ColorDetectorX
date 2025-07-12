@@ -2,6 +2,8 @@ package com.behnamuix.colordetect
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.TextureView
@@ -39,7 +41,6 @@ import ir.myket.billingclient.util.Security
 
 class MainActivity : ComponentActivity() {
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -55,3 +56,5 @@ class MainActivity : ComponentActivity() {
     }
 
 }
+
+

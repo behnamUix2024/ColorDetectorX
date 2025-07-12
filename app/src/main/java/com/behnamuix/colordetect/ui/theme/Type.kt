@@ -17,10 +17,14 @@ val Typography = Typography(
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
     ),
+    labelLarge = TextStyle(
+        fontFamily = Vazirfont,
+        textDirection = TextDirection.Ltr
+    ),
     titleMedium = TextStyle(
         fontWeight = FontWeight.Bold,
         fontFamily = Vazirfont,
-        textDirection = TextDirection.Rtl
+        textDirection = TextDirection.Ltr
     ),
     bodyMedium = TextStyle(
         fontFamily = Vazirfont,

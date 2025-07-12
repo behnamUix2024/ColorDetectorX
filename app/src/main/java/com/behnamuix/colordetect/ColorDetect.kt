@@ -6,6 +6,8 @@ import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.camera.core.CameraSelector
@@ -18,6 +20,9 @@ import androidx.camera.view.PreviewView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,6 +31,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -37,6 +43,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -49,28 +56,39 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDirection
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.behnamuix.colordetect.ui.theme.PurpleGrey80
+import com.example.zarinpal.ZarinPal
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 
 import java.util.concurrent.Executors
+import kotlin.math.roundToInt
 
 
 @Composable
 fun ColorDetectionApp() {
+    val context = LocalContext.current
+
+    Toast.makeText(context, "لطفا از طریق آیکون بالا سمت راست از ما حمایت کنید!", Toast.LENGTH_LONG).show()
+
 
 
     val cameraPermissionState = rememberPermissionState(android.Manifest.permission.CAMERA)
@@ -153,11 +171,12 @@ fun CameraPreviewWithColorDetection() {
 @Composable
 fun ColorInfoBox(color: Color, rgb: String, hex: String) {
 
-    var hexKeep by remember { mutableStateOf("#FFFFFF") }
+    var offsetX by remember { mutableStateOf(0f) }
+    var offsetY by remember { mutableStateOf(0f) }
 
-    var colorNameResult by remember { mutableStateOf("") }
-    val colorMapper = remember { ColorMapper() }
-    colorNameResult = colorMapper.getColorName(hex)
+    var hexKeep by remember { mutableStateOf("#FFFFFF") }
+    val ctx=LocalContext.current
+
 
 
     //Circle_Center
@@ -166,6 +185,27 @@ fun ColorInfoBox(color: Color, rgb: String, hex: String) {
             .fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.TopEnd
+        ){
+            IconButton(
+                modifier = Modifier
+                    .padding(top = 42.dp, end = 22.dp),
+                onClick = {
+                GotoZarinpal(ctx)
+            }) {
+                Icon(
+                    tint = PurpleGrey80,
+                    modifier = Modifier
+                        .background(Color.White)
+                        .padding(2.dp)
+                        .size(52.dp),
+                    painter = painterResource(R.drawable.icon_support),
+                    contentDescription = "",
+                )
+            }
+        }
         Box(
             modifier = Modifier
                 .size(35.dp)
@@ -198,7 +238,16 @@ fun ColorInfoBox(color: Color, rgb: String, hex: String) {
                 Card(
                     modifier = Modifier
                         .padding(start = 8.dp, end = 8.dp)
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
+                        .draggable(
+                            orientation = Orientation.Vertical,
+                            state = rememberDraggableState { delta ->
+                                offsetY += delta
+
+
+                            }
+                        ),
                     colors = CardDefaults.cardColors(containerColor = Color(0xFFFFFFFF))
 
                 ) {
@@ -218,7 +267,7 @@ fun ColorInfoBox(color: Color, rgb: String, hex: String) {
                                 Column(
                                     modifier = Modifier
                                         .fillMaxWidth(0.9f)
-                                        .padding(16.dp),
+                                        .padding(14.dp),
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     Box(
@@ -234,6 +283,7 @@ fun ColorInfoBox(color: Color, rgb: String, hex: String) {
                                     Text(
                                         text = "HEX:$hex",
                                         fontWeight = FontWeight.Bold,
+                                        fontFamily = FontFamily.Default,
                                         style = MaterialTheme.typography.titleMedium,
                                         color = Color.White
                                     )
@@ -243,7 +293,8 @@ fun ColorInfoBox(color: Color, rgb: String, hex: String) {
 
                                     Text(
                                         text = rgb,
-                                        style = MaterialTheme.typography.titleSmall,
+
+                                        fontSize = 12.sp,
                                         color = Color(0xFF909090)
                                     )
 
@@ -297,76 +348,95 @@ fun CopyableText(textToCopy: String) {
     val context = LocalContext.current
     val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
-    Card(
-        elevation = CardDefaults.elevatedCardElevation(8.dp),
-        modifier = Modifier
-            .padding(top=12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
-    ){
-        Text(
-            textAlign = TextAlign.Center,
-            text = textToCopy,
-            modifier = Modifier
-                .clickable {
-                    // ایجاد یک ClipData برای قرار دادن متن در کلیپ‌بورد
-                    val clip = ClipData.newPlainText("label", textToCopy)
-                    clipboardManager.setPrimaryClip(clip)
-                    //WebViewColor(textToCopy)
+
+   Column {
+       Card(
+           elevation = CardDefaults.elevatedCardElevation(8.dp),
+           modifier = Modifier
+               .padding(top = 12.dp),
+           colors = CardDefaults.cardColors(containerColor = Color.White)
+       ) {
+           Text(
+               style = TextStyle(
+                   textDirection = TextDirection.Ltr
+               ),
+               textAlign = TextAlign.Center,
+               text = textToCopy,
+               modifier = Modifier
+
+                   .clickable {
+                       // ایجاد یک ClipData برای قرار دادن متن در کلیپ‌بورد
+                       val clip = ClipData.newPlainText("label", textToCopy)
+                       clipboardManager.setPrimaryClip(clip)
+                       gotoHexColorSite(context,textToCopy)
 
 
-                    // نمایش یک پیام کوچک (Toast) به کاربر
-                }
-                .padding(8.dp)
-                .fillMaxWidth(0.4f),
-            color = PurpleGrey80,
-            fontFamily = FontFamily.Default,
-            fontWeight = FontWeight.Bold,
-            fontSize = 30.sp
+                       // نمایش یک پیام کوچک (Toast) به کاربر
+                   }
+                   .padding(8.dp)
+                   .fillMaxWidth(0.4f),
+               color = PurpleGrey80,
+               fontFamily = FontFamily.Default,
+               fontWeight = FontWeight.Bold,
+               fontSize = 30.sp
 
-        )
-    }
+           )
+       }
+       Row(
+           modifier = Modifier
+               .padding(top = 26.dp)
+       ){
+           Icon(
+               modifier = Modifier.size(80.dp),
+               painter = painterResource(R.drawable.img_arrow),
+               contentDescription = "",
+               tint = Color(0xFFC1C1C1)
+           )
+           Icon(
+               modifier = Modifier.size(80.dp),
+               painter = painterResource(R.drawable.img_arrow),
+               contentDescription = "",
+               tint = Color(0xFFC1C1C1)
+           )
+       }
+   }
 }
 
-@Composable
-fun WebViewColor(url: String) {
-    TODO("d")
-}
 
 @Composable
 fun PermissionRequestScreen(onRequestPermission: () -> Unit) {
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(32.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(32.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.icon_camera),
+            contentDescription = null,
+            modifier = Modifier.size(64.dp),
+            tint = MaterialTheme.colorScheme.primary
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Text(
+            text = "برای استفاده از تشخیص رنگ، لطفاً دسترسی دوربین را فعال کنید",
+            style = MaterialTheme.typography.titleLarge,
+            textAlign = TextAlign.Center
+        )
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Button(
+            onClick = onRequestPermission,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Icon(
-                painter = painterResource(R.drawable.icon_camera),
-                contentDescription = null,
-                modifier = Modifier.size(64.dp),
-                tint = MaterialTheme.colorScheme.primary
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Text(
-                text = "برای استفاده از تشخیص رنگ، لطفاً دسترسی دوربین را فعال کنید",
-                style = MaterialTheme.typography.titleLarge,
-                textAlign = TextAlign.Center
-            )
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            Button(
-                onClick = onRequestPermission,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("درخواست دسترسی به دوربین")
-            }
+            Text("درخواست دسترسی به دوربین")
         }
-
+    }
 
 
 }
@@ -384,7 +454,7 @@ fun PermissionRationaleScreen(onRequestPermission: () -> Unit) {
     ) {
 
         Icon(
-            painter = painterResource(R.drawable.icon_camera),
+            painter = painterResource(R.drawable.camera),
             contentDescription = null,
             modifier = Modifier.size(64.dp),
             tint = MaterialTheme.colorScheme.primary
